@@ -1,0 +1,32 @@
+# mediaserver app
+FROM golang:alpine
+
+RUN apk add --update \
+    build-base curl nasm tar bzip2 \
+    zlib-dev openssl-dev yasm-dev lame-dev libogg-dev x264-dev libvpx-dev libvorbis-dev x265-dev freetype-dev libass-dev libwebp-dev rtmpdump-dev libtheora-dev opus-dev
+
+RUN apk add --no-cache --update \
+    git \
+    ffmpeg-dev
+
+ENV GOPATH=/go \
+    PATH="/go/bin:$PATH"
+
+RUN go get -u github.com/golang/dep/cmd/dep
+
+# Copy the local package files to the container's workspace. Add to GOPATH
+ADD . /go/src/github.com/SArtemJ/ffmpeg
+
+WORKDIR /go/src/github.com/SArtemJ/ffmpeg
+
+# Build
+RUN go install github.com/SArtemJ/ffmpeg
+
+# Run the mailer command by default when the container starts.
+ENTRYPOINT /go/bin/ffmpeg
+
+#Service listens on port 8899.
+EXPOSE 8899
+
+#ENTRYPOINT /usr/bin/ffmpeg
+#CMD ["--help"]

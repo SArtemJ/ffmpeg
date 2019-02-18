@@ -1,0 +1,17 @@
+version: '3'
+services:
+  tserver:
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    container_name: tserver
+    environment:
+      - DEBUG=1
+    ports:
+      - 8899:8899
+    networks:
+      - tserver
+    tty: true
+
+networks:
+  tserver:
